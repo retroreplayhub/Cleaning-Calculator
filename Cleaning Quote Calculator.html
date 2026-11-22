@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cleaning Quote Calculator</title>
+<style>
+:root{--bg:#f6f7f5;--card:#fff;--tx:#1d2521;--mu:#5d6a63;--ln:#dfe4e0;--ac:#1f7a5c;--acx:#fff;--ok:#1f7a5c;--wn:#b7791f;--bd:#c0392b;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121715;--card:#1b231f;--tx:#e8eeea;--mu:#9aa8a0;--ln:#2d3833;--ac:#4cc29a;--acx:#0b1a14;--ok:#4cc29a;--wn:#e0aa4d;--bd:#ef7a6c}}
+:root[data-theme="dark"]{--bg:#121715;--card:#1b231f;--tx:#e8eeea;--mu:#9aa8a0;--ln:#2d3833;--ac:#4cc29a;--acx:#0b1a14;--ok:#4cc29a;--wn:#e0aa4d;--bd:#ef7a6c}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:640px;margin:0 auto;padding:16px 14px 40px}
+.top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+h1{font-size:1.3rem;margin:4px 0 2px}h2{font-size:1rem;margin:0 0 10px}
+.sub{color:var(--mu);font-size:.85rem;margin:0 0 14px}
+.lang{display:flex;flex:none;border:1px solid var(--ln);border-radius:99px;overflow:hidden;background:var(--card)}
+.lang button{border:0;background:none;color:var(--mu);padding:7px 12px;font:inherit;font-size:.85rem;font-weight:700}
+.lang button.on{background:var(--ac);color:var(--acx)}
+.card{background:var(--card);border:1px solid var(--ln);border-radius:14px;padding:14px;margin-bottom:12px}
+.seg{display:flex;gap:6px;margin-bottom:12px}
+.seg button{flex:1;padding:10px;border:1px solid var(--ln);background:var(--card);color:var(--tx);border-radius:10px;font:inherit;font-weight:600}
+.seg button.on{background:var(--ac);color:var(--acx);border-color:var(--ac)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 10px;align-items:stretch}
+.g3{grid-template-columns:repeat(3,1fr)}
+label,.fld{display:flex;flex-direction:column;justify-content:space-between;gap:4px;font-size:.8rem;color:var(--mu);min-width:0}
+input,select{width:100%;min-width:0;height:42px;padding:0 9px;border:1px solid var(--ln);border-radius:9px;background:var(--bg);color:var(--tx);font:inherit}
+input[type=range]{padding:0;height:30px;accent-color:var(--ac);border:0;background:none}
+input[type=checkbox]{width:18px;height:18px;margin:0;flex:none}
+.ck{flex-direction:row;align-items:center;justify-content:flex-start;gap:8px;height:42px;padding:0 9px;border:1px solid var(--ln);border-radius:9px;background:var(--bg);color:var(--tx);font-size:.9rem}
+.chk{flex-direction:row;align-items:flex-start;justify-content:flex-start;gap:8px;font-size:.9rem;color:var(--tx);margin:8px 0}
+.row{display:flex;justify-content:space-between;gap:12px;padding:5px 0;font-size:.92rem}
+.row span:last-child{font-variant-numeric:tabular-nums;text-align:right;flex:none}
+.row.t{border-top:1px solid var(--ln);margin-top:4px;padding-top:8px;font-weight:700}
+.big{font-size:2.3rem;font-weight:800;color:var(--ac);line-height:1.1}
+.mu{color:var(--mu);font-size:.82rem}
+.room{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid var(--ln)}
+.room input{width:74px;text-align:center;flex:none}
+.pill{display:inline-block;padding:3px 10px;border-radius:99px;font-size:.8rem;font-weight:700;color:#fff;text-align:center}
+details summary{cursor:pointer;font-weight:700;padding:2px 0}
+ul.b{margin:8px 0 0;padding-left:18px;font-size:.85rem;color:var(--mu)}
+</style></head><body><main>
+<div class="top"><div><h1 data-t="title"></h1><p class="sub" data-t="sub"></p></div>
+<div class="lang" role="group" aria-label="Language"><button id="bEn" class="on">EN</button><button id="bEs">ES</button></div></div>
+
+<div class="card">
+<div class="seg"><button id="mH" class="on" data-t="mH"></button><button id="mR" data-t="mR"></button></div>
+<div id="house" class="grid g3">
+<label><span data-t="sqft"></span><input id="sqft" type="number" inputmode="decimal"></label>
+<label><span data-t="fb"></span><input id="fb" type="number" inputmode="decimal"></label>
+<label><span data-t="hb"></span><input id="hb" type="number" inputmode="decimal"></label>
+</div>
+<div id="rooms" style="display:none"></div>
+<div class="grid" style="margin-top:12px">
+<label><span data-t="type"></span><select id="type"><option value="1" data-t="t1"></option><option value="1.4" data-t="t2"></option><option value="1.6" data-t="t3"></option></select></label>
+<label><span data-t="cond"></span><select id="cond"><option value="0.9" data-t="c1"></option><option value="1" selected data-t="c2"></option><option value="1.3" data-t="c3"></option></select></label>
+<label><span data-t="crew"></span><input id="crew" type="number" inputmode="decimal"></label>
+<div class="fld"><span>&nbsp;</span><label class="ck"><input id="pets" type="checkbox"><span data-t="pets"></span></label></div>
+</div>
+<details style="margin-top:10px"><summary data-t="addons"></summary><div id="addons"></div></details>
+</div>
+
+<div class="card"><h2 data-t="travel"></h2><div class="grid">
+<label><span data-t="miles"></span><input id="miles" type="number" inputmode="decimal"></label>
+<label><span data-t="dmin"></span><input id="dmin" type="number" inputmode="decimal"></label>
+</div><p class="mu" style="margin:8px 0 0" data-t="tnote"></p></div>
+
+<div class="card" id="out"></div>
+
+<div class="card"><h2 data-t="disc"></h2>
+<label><span><span data-t="dl"></span> <b id="dv"></b></span><input id="disc" type="range" min="0" max="30" step="1"></label>
+<label class="chk"><input id="cush" type="checkbox"><span data-t="cush"></span></label>
+<div id="dout"></div></div>
+
+<div class="card"><details><summary data-t="settings"></summary><div class="grid" style="margin-top:10px" id="set"></div>
+<p class="mu" data-t="snote"></p></details></div>
+
+<div class="card"><details><summary data-t="bench"></summary><ul class="b">
+<li data-t="b1"></li><li data-t="b2"></li><li data-t="b3"></li><li data-t="b4"></li><li data-t="b5"></li><li data-t="b6"></li><li data-t="b7"></li></ul></details></div>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const K={
+title:["Cleaning Quote Calculator","Calculadora de Cotizaciones de Limpieza"],
+sub:["Cost-plus pricing: your labor, travel, supplies and overhead, then profit on top.","Precio por costo más ganancia: tu mano de obra, traslado, suministros y gastos generales, y luego la ganancia."],
+mH:["Whole house","Casa completa"],mR:["By room","Por cuarto"],
+sqft:["Square feet","Pies cuadrados"],fb:["Full baths","Baños completos"],hb:["Half baths","Medios baños"],
+type:["Type of clean","Tipo de limpieza"],t1:["Standard","Estándar"],t2:["Deep clean (+40%)","Limpieza profunda (+40%)"],t3:["Move-in / move-out (+60%)","Mudanza: entrada/salida (+60%)"],
+cond:["Condition","Condición"],c1:["Light / tidy","Ligera / ordenada"],c2:["Average","Promedio"],c3:["Heavy / neglected","Pesada / descuidada"],
+crew:["Cleaners on the job","Personas limpiando"],pets:["Pets (+10% time)","Mascotas (+10% de tiempo)"],addons:["Add-ons","Extras"],
+travel:["Travel","Traslado"],miles:["Round-trip miles","Millas de ida y vuelta"],dmin:["Round-trip drive minutes","Minutos de manejo, ida y vuelta"],
+tnote:["Mileage uses the IRS business rate in Settings. Drive time is charged at your hourly pay.","El millaje usa la tarifa de negocios del IRS en Ajustes. El tiempo de manejo se cobra a tu pago por hora."],
+disc:["Discount cushion","Margen para descuentos"],dl:["Discount to offer:","Descuento a ofrecer:"],
+cush:["Build the cushion into my quote (quote higher so the discount still lands on my target price)","Incluir el margen en mi cotización (cotizar más alto para que, con el descuento, llegue a mi precio meta)"],
+settings:["Settings (your numbers)","Ajustes (tus números)"],
+snote:["IRS business mileage: 72.5¢ (Jan–Jun 2026), raised to 76¢ from July 1, 2026. Update this each January.","Millaje de negocios del IRS: 72.5¢ (ene–jun 2026), subió a 76¢ desde el 1 de julio de 2026. Actualízalo cada enero."],
+bench:["Market benchmarks (2026 research)","Referencias del mercado (investigación 2026)"],
+b1:["Hourly per cleaner: roughly $30–75 (independents often $20–50; companies $50–90).","Por hora, por persona: aprox. $30–75 (independientes a menudo $20–50; empresas $50–90)."],
+b2:["Standard clean: about $0.10–0.20 per sq ft; about $120–280 per visit for a typical home.","Limpieza estándar: aprox. $0.10–0.20 por pie²; unos $120–280 por visita en una casa típica."],
+b3:["Deep clean: add roughly 30–50%; up to about $0.25–0.30 per sq ft.","Limpieza profunda: agrega aprox. 30–50%; hasta unos $0.25–0.30 por pie²."],
+b4:["Move-out: up to about $0.22–0.35 per sq ft, or $300–440 flat for a 3 bed / 2 bath.","Mudanza (salida): hasta unos $0.22–0.35 por pie², o $300–440 fijo para 3 recámaras / 2 baños."],
+b5:["Add-ons (oven, fridge, windows): commonly $10–40 each, some $20–100+.","Extras (horno, refrigerador, ventanas): normalmente $10–40 c/u, algunos $20–100+."],
+b6:["Lower-cost regions run about 10–20% under national averages. Recurring clients usually get a flat, discounted rate.","Las regiones de menor costo están 10–20% por debajo del promedio nacional. Los clientes recurrentes suelen recibir una tarifa fija con descuento."],
+b7:["Factors: size, condition, pets, frequency, add-ons, supplies, and distance.","Factores: tamaño, condición, mascotas, frecuencia, extras, suministros y distancia."],
+minb:["min base","min base"],mine:["min each","min c/u"],
+s_wage:["Your pay per hour ($)","Tu pago por hora ($)"],s_sup:["Supplies per labor hour ($)","Suministros por hora de trabajo ($)"],
+s_oh:["Overhead % (insurance, gear, software)","Gastos generales % (seguro, equipo, software)"],s_margin:["Target profit margin %","Margen de ganancia meta %"],
+s_minm:["Lowest margin I’ll accept %","Margen mínimo que acepto %"],s_minjob:["Minimum job price ($)","Precio mínimo por trabajo ($)"],
+s_rate:["Mileage rate ($/mile)","Tarifa por milla ($/milla)"],s_per100:["Minutes per 100 sq ft","Minutos por 100 pies²"],s_rnd:["Round up to nearest ($)","Redondear hacia arriba a ($)"],
+r0:["Kitchen","Cocina"],r1:["Full bathroom","Baño completo"],r2:["Half bathroom","Medio baño"],r3:["Bedroom","Recámara"],r4:["Living room","Sala"],r5:["Dining room","Comedor"],r6:["Home office","Oficina en casa"],r7:["Laundry room","Cuarto de lavado"],r8:["Hallway / stairs","Pasillo / escaleras"],r9:["Entry","Entrada"],r10:["Basement / bonus room","Sótano / cuarto extra"],
+a0:["Inside oven","Horno por dentro"],a1:["Inside fridge","Refrigerador por dentro"],a2:["Inside cabinets (kitchen)","Gabinetes por dentro (cocina)"],a3:["Baseboards (whole home)","Zoclos (toda la casa)"],a4:["Windows, interior (each)","Ventanas interiores (c/u)"],a5:["Blinds (each)","Persianas (c/u)"],a6:["Laundry (per load)","Lavandería (por carga)"],a7:["Dishes / load dishwasher","Platos / cargar lavavajillas"],
+o_sug:["Suggested price","Precio sugerido"],o_empty:["Enter a house size or add rooms to see a price.","Ingresa el tamaño de la casa o agrega cuartos para ver un precio."],
+o_labor:["Labor","Mano de obra"],o_drive:["Drive time","Tiempo de manejo"],o_mile:["Mileage","Millaje"],o_sup:["Supplies","Suministros"],o_oh:["Overhead","Gastos generales"],
+o_cost:["Total cost","Costo total"],o_profit:["Profit","Ganancia"],o_margin:["margin","de margen"],o_ph:["person-hours","horas-persona"],o_on:["hrs on site","h en sitio"],o_pph:["per person-hour","por hora-persona"],o_sf:["/sq ft","/pie²"],o_hrs:["hrs","h"],o_mi:["mi","mi"],
+d_list:["Quote shown to client","Cotización mostrada al cliente"],d_after:["After","Después de"],d_off:["off","de descuento"],d_profit:["Your profit","Tu ganancia"],d_status:["Status","Estado"],
+st1:["Losing money","Pierdes dinero"],st2:["Below your minimum margin","Debajo de tu margen mínimo"],st3:["Above minimum, below target","Sobre el mínimo, bajo la meta"],st4:["Target margin covered","Margen meta cubierto"],
+d_max:["Biggest discount you can give and keep","Mayor descuento posible manteniendo"],d_max2:["margin","de margen"],d_be:["Break-even discount (zero profit)","Descuento de equilibrio (ganancia cero)"]
+};
+const D={wage:25,sup:2.5,oh:10,margin:25,minm:10,minjob:100,rate:0.76,per100:6,rnd:5,sqft:2000,fb:2,hb:0,crew:1,miles:20,dmin:40,disc:10};
+const SETS=["wage","sup","oh","margin","minm","minjob","rate","per100","rnd"];
+const RM=[55,40,20,25,25,15,20,15,15,10,30];
+const AD=[30,25,30,30,5,4,15,15];
+let S=Object.assign({},D),mode="H",R={},A={},cush=false,lang=0;
+try{Object.assign(S,JSON.parse(localStorage.getItem("hkset")||"{}"));const l=localStorage.getItem("hklang");lang=l!==null?+l:((navigator.language||"").toLowerCase().startsWith("es")?1:0)}catch(e){}
+const t=k=>K[k]?K[k][lang]:k;
+function save(){try{localStorage.setItem("hkset",JSON.stringify(S));localStorage.setItem("hklang",lang)}catch(e){}}
+$("set").innerHTML=SETS.map(k=>`<label><span data-t="s_${k}"></span><input data-s="${k}" type="number" inputmode="decimal" step="any"></label>`).join("");
+$("rooms").innerHTML=RM.map((m,i)=>`<div class="room"><div><span data-t="r${i}"></span><div class="mu">${m} <span data-t="minb"></span></div></div><input data-r="${i}" type="number" inputmode="numeric" min="0" value="0"></div>`).join("");
+$("addons").innerHTML=AD.map((m,i)=>`<div class="room"><div><span data-t="a${i}"></span><div class="mu">${m} <span data-t="mine"></span></div></div><input data-a="${i}" type="number" inputmode="numeric" min="0" value="0"></div>`).join("");
+document.querySelectorAll("[data-s]").forEach(e=>e.value=S[e.dataset.s]);
+["sqft","fb","hb","crew","miles","dmin"].forEach(k=>$(k).value=S[k]);$("disc").value=S.disc;
+const n=v=>{v=parseFloat(v);return isFinite(v)&&v>0?v:0};
+const $$=x=>"$"+x.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+const $0=x=>"$"+Math.round(x).toLocaleString("en-US");
+function calc(){
+ S.sqft=n($("sqft").value);S.fb=n($("fb").value);S.hb=n($("hb").value);S.crew=Math.max(1,n($("crew").value));S.miles=n($("miles").value);S.dmin=n($("dmin").value);S.disc=n($("disc").value);
+ document.querySelectorAll("[data-s]").forEach(e=>{S[e.dataset.s]=n(e.value)});
+ let base=0;
+ if(mode=="H")base=S.sqft*S.per100/100+S.fb*20+S.hb*10+30;
+ else RM.forEach((m,i)=>base+=m*n(R[i]));
+ const mult=n($("type").value)*n($("cond").value)*($("pets").checked?1.1:1);
+ let addMin=0;AD.forEach((m,i)=>addMin+=m*n(A[i]));
+ const ph=(base*mult+addMin)/60,onsite=ph/S.crew;
+ const labor=ph*S.wage,drive=S.dmin/60*S.wage*S.crew,mile=S.miles*S.rate,sup=ph*S.sup;
+ const direct=labor+drive+mile+sup,oh=direct*S.oh/100,cost=direct+oh;
+ const mg=Math.min(S.margin,90)/100;
+ let price=Math.max(cost/(1-mg),S.minjob);
+ if(S.rnd>0)price=Math.ceil(price/S.rnd)*S.rnd;
+ if(!ph)price=0;
+ const profit=price-cost;
+ $("out").innerHTML=ph?`<div class="mu">${t("o_sug")}</div><div class="big">${$0(price)}</div>
+ <div class="mu">${ph.toFixed(1)} ${t("o_ph")} · ~${onsite.toFixed(1)} ${t("o_on")} · ${$$(price/ph)} ${t("o_pph")}${mode=="H"&&S.sqft?` · ${$$(price/S.sqft)}${t("o_sf")}`:""}</div>
+ <div style="margin-top:10px">
+ <div class="row"><span>${t("o_labor")} (${ph.toFixed(1)} ${t("o_hrs")} × ${$$(S.wage)})</span><span>${$$(labor)}</span></div>
+ <div class="row"><span>${t("o_drive")}</span><span>${$$(drive)}</span></div>
+ <div class="row"><span>${t("o_mile")} (${S.miles} ${t("o_mi")} × ${$$(S.rate)})</span><span>${$$(mile)}</span></div>
+ <div class="row"><span>${t("o_sup")}</span><span>${$$(sup)}</span></div>
+ <div class="row"><span>${t("o_oh")} (${S.oh}%)</span><span>${$$(oh)}</span></div>
+ <div class="row t"><span>${t("o_cost")}</span><span>${$$(cost)}</span></div>
+ <div class="row"><span>${t("o_profit")} (${(profit/price*100).toFixed(0)}% ${t("o_margin")})</span><span>${$$(profit)}</span></div></div>`:`<div class="mu">${t("o_empty")}</div>`;
+ const d=S.disc/100;$("dv").textContent=S.disc+"%";
+ let list=price,fin=price*(1-d);
+ if(cush){list=S.rnd>0?Math.ceil(price/(1-d)/S.rnd)*S.rnd:price/(1-d);fin=list*(1-d)}
+ const fp=fin-cost,fm=fin?fp/fin:0;
+ const floor=cost/(1-S.minm/100),maxd=list?Math.max(0,1-floor/list):0,be=list?Math.max(0,1-cost/list):0;
+ if(!price){$("dout").innerHTML="";return}
+ let st,col;
+ if(fp<0){st="st1";col="var(--bd)"}else if(fm*100<S.minm){st="st2";col="var(--bd)"}else if(fm*100<S.margin-0.5){st="st3";col="var(--wn)"}else{st="st4";col="var(--ok)"}
+ $("dout").innerHTML=`<div class="row"><span>${t("d_list")}</span><span><b>${$0(list)}</b></span></div>
+ <div class="row"><span>${t("d_after")} ${S.disc}% ${t("d_off")}</span><span><b>${$0(fin)}</b></span></div>
+ <div class="row"><span>${t("d_profit")}</span><span>${$$(fp)} (${(fm*100).toFixed(0)}%)</span></div>
+ <div class="row"><span>${t("d_status")}</span><span class="pill" style="background:${col}">${t(st)}</span></div>
+ <div class="row t"><span>${t("d_max")} ${S.minm}% ${t("d_max2")}</span><span>${(maxd*100).toFixed(0)}%</span></div>
+ <div class="row"><span>${t("d_be")}</span><span>${(be*100).toFixed(0)}%</span></div>`;
+ save();
+}
+function applyLang(){
+ document.documentElement.lang=lang?"es":"en";document.title=t("title");
+ document.querySelectorAll("[data-t]").forEach(e=>e.textContent=t(e.dataset.t));
+ $("bEn").classList.toggle("on",!lang);$("bEs").classList.toggle("on",!!lang);calc();
+}
+document.addEventListener("input",e=>{const x=e.target;if(x.dataset.r!==undefined)R[x.dataset.r]=x.value;if(x.dataset.a!==undefined)A[x.dataset.a]=x.value;if(x.id=="cush")cush=x.checked;calc()});
+function setMode(m){mode=m;$("mH").classList.toggle("on",m=="H");$("mR").classList.toggle("on",m=="R");$("house").style.display=m=="H"?"grid":"none";$("rooms").style.display=m=="R"?"block":"none";calc()}
+$("mH").onclick=()=>setMode("H");$("mR").onclick=()=>setMode("R");
+$("bEn").onclick=()=>{lang=0;applyLang()};$("bEs").onclick=()=>{lang=1;applyLang()};
+applyLang();
+</script></body></html>
